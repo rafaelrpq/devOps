@@ -25,18 +25,41 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
       - name: Configurando Ambiente
         run: |
           sudo apt install valac meson ninja-build cmake make libgtk-4-dev libjson-glib-dev libsoup2.4-dev -y
           meson build
           cd build
           ninja
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+
+  teste:
+    runs-on: ubuntu-latest
+    environment:
+      name: teste
+      url: rafaelrpq.github.io
+    needs: build
+    steps:
+    - name: Executando testes
+      run: echo Rodando testes...
+
+
+  homologacao:
+    runs-on: ubuntu-latest
+    environment:
+      name: homologacao
+      url: rafaelrpq.github.io
+    needs: teste
+    steps:
+    - name: aguardando homologacao
+      run: echo Aguardando homologacao...
+
+
+  producao:
+    runs-on: ubuntu-latest
+    environment:
+      name: producao
+      url: rafaelrpq.github.io
+    needs: homologacao
+    steps:
+    - name: Liberar producao
+      run: echo Aguardando liberacao para entrar em producao
